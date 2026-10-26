@@ -1,0 +1,43 @@
+INFO:Detectors:
+Detector: reentrancy-no-eth
+Reentrancy in FloppyMarket.acceptCollectionBid(address,uint256,uint256) (src/FloppyMarket.sol#250-272):
+	External calls:
+	- collection.safeTransferFrom(msg.sender,bidder,tokenId) (src/FloppyMarket.sol#270)
+	State variables written after the call(s):
+	- _settle(SaleKind.CollectionBid,tokenId,msg.sender,bidder,b.amount) (src/FloppyMarket.sol#271)
+		- totalEscrowed += amount (src/FloppyMarket.sol#373)
+	FloppyMarket.totalEscrowed (src/FloppyMarket.sol#62) can be used in cross function reentrancies:
+	- FloppyMarket.totalEscrowed (src/FloppyMarket.sol#62)
+Reentrancy in FloppyMarket.acceptOffer(uint256,address,uint256) (src/FloppyMarket.sol#195-217):
+	External calls:
+	- collection.safeTransferFrom(msg.sender,bidder,tokenId) (src/FloppyMarket.sol#215)
+	State variables written after the call(s):
+	- _settle(SaleKind.Offer,tokenId,msg.sender,bidder,o.amount) (src/FloppyMarket.sol#216)
+		- totalEscrowed += amount (src/FloppyMarket.sol#373)
+	FloppyMarket.totalEscrowed (src/FloppyMarket.sol#62) can be used in cross function reentrancies:
+	- FloppyMarket.totalEscrowed (src/FloppyMarket.sol#62)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+INFO:Detectors:
+Detector: reentrancy-benign
+Reentrancy in FloppyMarket.acceptCollectionBid(address,uint256,uint256) (src/FloppyMarket.sol#250-272):
+	External calls:
+	- collection.safeTransferFrom(msg.sender,bidder,tokenId) (src/FloppyMarket.sol#270)
+	State variables written after the call(s):
+	- _settle(SaleKind.CollectionBid,tokenId,msg.sender,bidder,b.amount) (src/FloppyMarket.sol#271)
+		- pendingWithdrawals[to] += amount (src/FloppyMarket.sol#372)
+Reentrancy in FloppyMarket.acceptOffer(uint256,address,uint256) (src/FloppyMarket.sol#195-217):
+	External calls:
+	- collection.safeTransferFrom(msg.sender,bidder,tokenId) (src/FloppyMarket.sol#215)
+	State variables written after the call(s):
+	- _settle(SaleKind.Offer,tokenId,msg.sender,bidder,o.amount) (src/FloppyMarket.sol#216)
+		- pendingWithdrawals[to] += amount (src/FloppyMarket.sol#372)
+Reentrancy in FloppyMarket.buy(uint256) (src/FloppyMarket.sol#146-160):
+	External calls:
+	- collection.safeTransferFrom(l.seller,msg.sender,tokenId) (src/FloppyMarket.sol#158)
+	State variables written after the call(s):
+	- _settle(SaleKind.Listing,tokenId,l.seller,msg.sender,l.price) (src/FloppyMarket.sol#159)
+		- pendingWithdrawals[to] += amount (src/FloppyMarket.sol#372)
+	- _settle(SaleKind.Listing,tokenId,l.seller,msg.sender,l.price) (src/FloppyMarket.sol#159)
+		- totalEscrowed += amount (src/FloppyMarket.sol#373)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+INFO:Slither:. analyzed (11 contracts with 100 detectors), 5 result(s) found
